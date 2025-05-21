@@ -27,7 +27,8 @@ export function generateAccessToken(payload: JwtPayload): string {
 
 // Function to generate the refresh token (this does not add to Denial list yet)
 export function generateRefreshToken(payload: JwtPayload): string {
-    return jwt.sign(payload, JWT_SECRET, refreshTokenOptions);
+    const refreshPayload = { ...payload, tokenType: "refreshToken" };
+    return jwt.sign(refreshPayload, JWT_SECRET, refreshTokenOptions);
 }
 
 // Function to verify the token (for both access and refresh tokens)

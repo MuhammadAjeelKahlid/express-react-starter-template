@@ -2,6 +2,7 @@ import { userService } from "@/services/user.service";
 import { Request, Response } from "express";
 import { LoginResponseDto, SuccessResponseDto, } from "@/dtos/auth.dto";
 import { denyToken, generateAccessToken, generateRefreshToken, isTokenDenied, verifyToken } from "@/utils/jwt.util";
+import { tokenPayload } from "@/utils/payload.util";
 
 
 export const authController = {
@@ -22,11 +23,7 @@ export const authController = {
             const { email, password } = req.body;
             const user = await userService.login(email, password);
 
-            const payload = {
-                email: user.email,
-                role: user.role,
-                profileIcon: user.profileIcon
-            };
+            const payload = tokenPayload(user)
 
             const accessToken = generateAccessToken(payload);
             const refreshToken = generateRefreshToken(payload);
@@ -87,19 +84,14 @@ export const authController = {
             const payload = verifyToken(refreshToken);
 
             // Retrieve user info from payload
-            const user = await userService.getUserByEmail(payload.email);
+            const user = await userService.getUserById(payload.id);
 
             if (!user) {
                 res.status(404).json({ message: "User not found" });
                 return;
             }
 
-            const newPayload = {
-                email: user.email,
-                role: user.role,
-                profileIcon: user.profileIcon
-            };
-
+            const newPayload = tokenPayload(user)
             // Generate a new access token and refresh token
             const newAccessToken = generateAccessToken(newPayload);
             const newRefreshToken = generateRefreshToken(newPayload);

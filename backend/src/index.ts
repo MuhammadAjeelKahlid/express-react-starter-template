@@ -6,6 +6,7 @@ import { AppDataSource } from "@/database/data-source";
 
 //Routes Imports
 import authRoutes from "@/routes/auth.route"
+import userRoutes from "@/routes/user.route"
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
@@ -18,6 +19,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1/auth", authRoutes)
+app.use("/api/v1", userRoutes)
 
 // Initialize DB & start server
 const startServer = async () => {
