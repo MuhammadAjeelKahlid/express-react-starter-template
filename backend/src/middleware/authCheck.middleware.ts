@@ -19,12 +19,8 @@ export const authCheck = (requiredRole?: string) => {
                 res.status(401).json({ message: "Invalid token type for resource access" });
                 return;
             }
-            // const user = await userService.getUserById(payload.id);
-            // if (!user) {
-            //     res.status(401).json({ message: "User not found" });
-            //     return; // <-- Add return!
-            // }
-            // Attach user to the request object for use in downstream route handlers
+
+            // Attach user to the request object for use in downstream route handlers from payload
             (req as any).user = payload;
             // If a role is required, check if the user has the correct role
             if (requiredRole && payload.role !== requiredRole) {
