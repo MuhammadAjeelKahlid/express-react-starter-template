@@ -11,7 +11,7 @@ router.get("/verify-email", validate(tokenVerificationSchema), authController.ve
 router.get("/resend-verification-token", validate(emailSchema), authController.resendVerification);
 router.post("/refresh-token", validate(refreshTokenVerificationSchema), authController.refreshToken);
 router.post("/change-password", validate(changePasswordRequest), authCheck(), authController.changePassword);
-router.post("/forgot-password", authController.forgotPassword);
-router.post("/reset-password", authController.resetPassword);
+router.post("/forgot-password", validate(emailSchema), authController.forgotPassword);
+router.post("/reset-password", validate(tokenVerificationSchema), authController.resetPassword);
 
 export default router; 

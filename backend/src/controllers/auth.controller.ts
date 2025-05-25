@@ -119,6 +119,11 @@ export const authController = {
                 res.status(400).json({ message: "Current, new password, and refresh token are required" });
                 return;
             }
+            const isDenied = await isTokenDenied(refreshToken);
+            if (isDenied) {
+                res.status(401).json({ message: "Refresh token has already been used or denied" });
+                return;
+            }
             await denyToken(refreshToken);
 
             await userService.changePassword(userId, currentPassword, newPassword);
@@ -160,8 +165,10 @@ export const authController = {
 
     resetPassword: async (req: Request, res: Response) => {
         try {
-            const { token, newPassword } = req.body;
-            await userService.resetPassword(token, newPassword);
+
+            const { token } = req.query;
+            const { newPassword } = req.body;
+            await userService.resetPassword(token as string, newPassword);
             res.status(200).json({
                 message: "Password has been reset successfully.",
             });

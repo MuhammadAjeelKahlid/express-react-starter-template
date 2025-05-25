@@ -19,7 +19,7 @@ export const loginSchema = z.object({
 }).strict();
 
 export const tokenVerificationSchema = z.object({
-    token: z.string()
+    newPassword: z.string().optional()
 }).strict();
 
 export const idSchema = z.object({
@@ -37,7 +37,7 @@ export const emailSchema = z.object({
 
 
 export const changePasswordRequest = z.object({
-    oldPassword: z.string().min(8),
+    currentPassword: z.string().min(8),
     newPassword: z.string().min(8),
     refreshToken: z.string(),
 })
