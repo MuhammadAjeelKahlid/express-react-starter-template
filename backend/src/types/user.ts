@@ -1,9 +1,11 @@
+import "multer";
 interface CreateUserInput {
     email: string;
     password: string;
     firstName: string;
     lastName: string;
     profileIcon: string,
+    profileIconFile?: Express.Multer.File;
     dob?: Date;
     city?: string;
     state?: string;

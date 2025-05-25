@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import "multer";
 import { userService } from "@/services/user.service";
 import { User } from "@/database/entity/User.entity";
 import { SafeUserDto, SuccessResponseDto } from "@/dtos/auth.dto"; // Adjust import if you have separate UserResponseDto
@@ -36,7 +37,15 @@ export const userController = {
     // Create user
     create: async (req: Request, res: Response) => {
         try {
-            const user = await userService.createUser(req.body);
+            const fileReq = req as Request & { file?: Express.Multer.File };
+            const profileIconFile = fileReq.file;
+
+            const user = await userService.createUser({
+                ...req.body,
+                profileIconFile, // Pass file object to service
+            });
+
+
             // Optionally: don't return password/hash fields in response
             const responseDto = new SuccessResponseDto("User Created successfully", new SafeUserDto(user));
             res.status(201).json(responseDto);

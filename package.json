@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.817.0",
+    "@aws-sdk/s3-request-presigner": "^3.817.0",
+    "multer": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/multer": "^1.4.12"
+  }
+}

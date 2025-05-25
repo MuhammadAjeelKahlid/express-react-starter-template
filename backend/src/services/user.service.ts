@@ -2,6 +2,7 @@ import { User } from "@/database/entity/User.entity";
 import { CreateUserInput } from "@/types/user";
 import { sendVerificationEmail } from "@/utils/email.util";
 import { compareHash, hashString } from "@/utils/hash";
+import { uploadToS3 } from "@/utils/s3.util";
 import { v4 as uuidv4 } from "uuid";
 
 export const userService = {
@@ -21,15 +22,23 @@ export const userService = {
         const existing = await User.findOneBy({ email: data.email });
 
         if (existing) throw new Error("User already exists");
-
+        let profileIconUrl = ""
         const hashedPassword = await hashString(data.password);
+        if (data.profileIconFile) {
+            const key = `users/profile-icons/${Date.now()}-${data.profileIconFile.originalname}`;
+            profileIconUrl = await uploadToS3(
+                key,
+                data.profileIconFile.buffer,
+                data.profileIconFile.mimetype
+            );
+        }
 
         const user = User.create({
             email: data.email,
             password: hashedPassword,
             firstName: data.firstName,
             lastName: data.lastName,
-            profileIcon: data.profileIcon,
+            profileIcon: profileIconUrl,
             dob: data.dob,
             city: data.city,
             state: data.state,
