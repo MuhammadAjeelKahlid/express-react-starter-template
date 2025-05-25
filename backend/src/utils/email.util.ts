@@ -30,3 +30,4 @@ export async function sendVerificationEmail(
 
     await transporter.sendMail(mailOptions);
 }
+

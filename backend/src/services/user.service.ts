@@ -99,4 +99,56 @@ export const userService = {
         return user;
     },
 
+    async changePassword(
+        userId: string,
+        currentPassword: string,
+        newPassword: string
+    ): Promise<void> {
+        const user = await User.findOneBy({ id: userId });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Compare the current password with the stored hash
+        const isMatch = await compareHash(currentPassword, user.password);
+        if (!isMatch) {
+            throw new Error("Current password is incorrect");
+        }
+
+        // Hash the new password
+        const newHashedPassword = await hashString(newPassword);
+
+        user.password = newHashedPassword;
+        await user.save();
+    },
+    async requestPasswordReset(email: string): Promise<void> {
+        const user = await User.findOneBy({ email });
+        if (!user) throw new Error("User not found");
+
+        const token = uuidv4();
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
+
+        await user.save();
+        // await sendResetPasswordEmail(user.email, token); // Implement this util to send the link!
+    },
+
+    async resetPassword(token: string, newPassword: string): Promise<void> {
+        const user = await User.findOneBy({ resetPasswordToken: token });
+
+        if (
+            !user ||
+            !user.resetPasswordExpires ||
+            user.resetPasswordExpires < new Date()
+        ) {
+            throw new Error("Invalid or expired reset token");
+        }
+
+        user.password = await hashString(newPassword);
+        user.resetPasswordToken = null;
+        user.resetPasswordExpires = null;
+        await user.save();
+    },
+
+
 };

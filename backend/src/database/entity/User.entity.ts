@@ -66,6 +66,12 @@ export class User extends BaseEntity {
     @Column({ nullable: true })
     ipAddress!: string;
 
+    @Column({ type: "varchar", nullable: true })
+    resetPasswordToken!: string | null;
+
+    @Column({ nullable: true, type: "timestamp" })
+    resetPasswordExpires!: Date | null;
+
     @Column({ type: "timestamp", nullable: true })
     lastLogin!: Date;
 
@@ -75,3 +81,4 @@ export class User extends BaseEntity {
     @UpdateDateColumn()
     updatedAt!: Date;
 }
+

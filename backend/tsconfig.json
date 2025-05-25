@@ -116,6 +116,7 @@
     "baseUrl": "src", // ✅ This tells TS where "@" starts from
     "paths": {
       "@/*": ["*"]
-    }
+    },
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   }
 }

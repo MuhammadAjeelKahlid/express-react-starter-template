@@ -34,3 +34,10 @@ export const emailSchema = z.object({
     email: z.string().email(),
 
 });
+
+
+export const changePasswordRequest = z.object({
+    oldPassword: z.string().min(8),
+    newPassword: z.string().min(8),
+    refreshToken: z.string(),
+})

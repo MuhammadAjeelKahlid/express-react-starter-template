@@ -7,7 +7,6 @@ export class LoginResponseDto {
     constructor(public accessToken: string, public refreshToken: string) { }
 }
 
-
 export class SafeUserDto {
     constructor(user: User) {
         Object.assign(this, {

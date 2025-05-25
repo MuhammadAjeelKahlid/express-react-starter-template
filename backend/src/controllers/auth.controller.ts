@@ -106,5 +106,71 @@ export const authController = {
         } catch (error: any) {
             res.status(401).json({ message: error.message || "Invalid or expired refresh token" });
         }
-    }
+    },
+
+
+    changePassword: async (req: Request, res: Response): Promise<void> => {
+        try {
+            const userId = (req as any).user.id;
+
+            const { currentPassword, newPassword, refreshToken } = req.body;
+
+            if (!currentPassword || !newPassword || !refreshToken) {
+                res.status(400).json({ message: "Current, new password, and refresh token are required" });
+                return;
+            }
+            await denyToken(refreshToken);
+
+            await userService.changePassword(userId, currentPassword, newPassword);
+
+            const user = await userService.getUserById(userId);
+            if (!user) {
+                res.status(404).json({ message: "User not found" });
+                return;
+            }
+            const payload = tokenPayload(user);
+            const newAccessToken = generateAccessToken(payload);
+            const newRefreshToken = generateRefreshToken(payload);
+
+            const tokens = new LoginResponseDto(newAccessToken, newRefreshToken);
+
+            res.status(200).json({
+                message: "Password changed successfully. Please use your new tokens.",
+                ...tokens,
+            });
+        } catch (error: any) {
+            res.status(400).json({ message: error.message || "Password change failed" });
+        }
+    },
+
+    forgotPassword: async (req: Request, res: Response) => {
+        try {
+            const { email } = req.body;
+            await userService.requestPasswordReset(email);
+            res.status(200).json({
+                message: "If this email exists, a reset link has been sent.",
+            });
+        } catch (error: any) {
+            // Always return 200 for security, or you can customize the message
+            res.status(200).json({
+                message: "If this email exists, a reset link has been sent.",
+            });
+        }
+    },
+
+    resetPassword: async (req: Request, res: Response) => {
+        try {
+            const { token, newPassword } = req.body;
+            await userService.resetPassword(token, newPassword);
+            res.status(200).json({
+                message: "Password has been reset successfully.",
+            });
+        } catch (error: any) {
+            res.status(400).json({
+                message: error.message || "Failed to reset password",
+            });
+        }
+    },
+
+
 };
