@@ -12,19 +12,20 @@ const transporter = nodemailer.createTransport({
 
 export async function sendVerificationEmail(
     to: string,
-    token: string
+    token: string,
+    route: string
 ): Promise<void> {
-    const verificationUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+    const verificationUrl = `${process.env.FRONTEND_URL}/${route}?token=${token}`;
 
     const mailOptions = {
         from: `${process.env.SMTP_USER_NAME} <${process.env.SMTP_USER}>`,
         to,
-        subject: "Verify your email address",
+        subject: "Please Verify yourself",
         html: `
-      <p>Thanks for signing up!</p>
-      <p>Please verify your email by clicking the link below:</p>
-      <a href="${verificationUrl}">Verify Email</a>
-      <p>If you did not create an account, you can ignore this email.</p>
+      <p>Thanks for Verification!</p>
+      <p>Please verify yourself by clicking the link below:</p>
+      <a href="${verificationUrl}">Verify yourself</a>
+      <p>If you did not create an account / ask for reset-password, you can ignore this email.</p>
     `,
     };
 

@@ -39,7 +39,7 @@ export const userService = {
             verificationTokenExpires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
         });
 
-        // sendVerificationEmail(user.email, user.verificationToken!).catch(console.error);
+        sendVerificationEmail(user.email, user.verificationToken!, "verify-email").catch(console.error);
         await user.save();
         return user;
     },
@@ -78,8 +78,6 @@ export const userService = {
         user.verificationTokenExpires = null;
         await user.save();
 
-        // sendVerificationEmail(user.email, user.verificationToken!).catch(console.error);
-
         return user;
     },
 
@@ -94,7 +92,7 @@ export const userService = {
         await user.save();
 
 
-        // sendVerificationEmail(user.email, user.verificationToken!).catch(console.error);
+        sendVerificationEmail(user.email, user.verificationToken!, "verify-email").catch(console.error);
 
         return user;
     },
@@ -130,7 +128,7 @@ export const userService = {
         user.resetPasswordExpires = new Date(Date.now() + 1000 * 60 * 60); // 1 hour
 
         await user.save();
-        // await sendResetPasswordEmail(user.email, token); // Implement this util to send the link!
+        sendVerificationEmail(user.email, user.verificationToken!, "reset-password").catch(console.error);
     },
 
     async resetPassword(token: string, newPassword: string): Promise<void> {
@@ -149,6 +147,5 @@ export const userService = {
         user.resetPasswordExpires = null;
         await user.save();
     },
-
 
 };
